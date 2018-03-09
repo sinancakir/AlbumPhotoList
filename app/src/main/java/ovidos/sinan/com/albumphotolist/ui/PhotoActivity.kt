@@ -1,8 +1,6 @@
 package ovidos.sinan.com.albumphotolist.ui
 
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -24,7 +22,6 @@ import ovidos.sinan.com.albumphotolist.`interface`.PhotoClickListener
 import ovidos.sinan.com.albumphotolist.adapter.PhotoListAdapter
 import ovidos.sinan.com.albumphotolist.model.Photo
 import java.io.IOException
-import java.net.URL
 
 
 class PhotoActivity : AppCompatActivity(), Response.Listener<String>, Response.ErrorListener, PhotoClickListener {
@@ -88,5 +85,4 @@ class PhotoActivity : AppCompatActivity(), Response.Listener<String>, Response.E
         imageDialog.show()
         Glide.with(this).load(url).into(dialogImage!!)
     }
-
 }
