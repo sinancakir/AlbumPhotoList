@@ -4,12 +4,9 @@ import android.content.Context
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 
-
-/******************************
- * Created by Gökhan ÖZTÜRK   |
- * 10.02.2018                 |
- * GokhanOzturk@AndroidEdu.IO |
- *****************************/
+/**
+ * Created by sinan on 08.03.2018.
+ */
 
 class VolleyService constructor(private val context: Context) {
 

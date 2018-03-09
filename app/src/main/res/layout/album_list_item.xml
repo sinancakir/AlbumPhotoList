@@ -13,7 +13,7 @@
     android:background="@android:color/white">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/album_list_item_txtAlbum"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
