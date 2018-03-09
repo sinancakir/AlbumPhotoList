@@ -58,7 +58,7 @@ class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.E
     }
 
     override fun onResponse(response: String) {
-        Log.e(response.javaClass.simpleName, response)
+        //Log.e(response.javaClass.simpleName, response)
 
         try {
             castByGSon(response)
