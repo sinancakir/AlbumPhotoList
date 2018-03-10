@@ -1,14 +1,18 @@
 package ovidos.sinan.com.albumphotolist.ui
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.SwitchPreference
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.TextView
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.VolleyError
@@ -23,12 +27,14 @@ import ovidos.sinan.com.albumphotolist.adapter.AlbumListAdapter
 import ovidos.sinan.com.albumphotolist.model.Album
 import java.io.IOException
 
-class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.ErrorListener, AlbumClickListener {
+class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.ErrorListener, AlbumClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private val url = "http://jsonplaceholder.typicode.com/albums"
 
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.activity_album_recycler_view) }
     private val progress by lazy { findViewById<ProgressBar>(R.id.activity_album_prgBar) }
+    private val txtEmptyView by lazy { findViewById<TextView>(R.id.activity_album_txtEmptyView) }
+    private val swipeRefreshLayout by lazy { findViewById<SwipeRefreshLayout>(R.id.activity_album_swipe) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +43,24 @@ class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.E
         recyclerView.layoutManager = LinearLayoutManager(this)
         val divider = DividerItemDecoration(recyclerView.context, LinearLayoutManager.VERTICAL)
         recyclerView.addItemDecoration(divider)
+        isNetworkAvailable(this)
+        swipeRefreshLayout.setOnRefreshListener(this)
 
-        sendRequest(url)
-        progress.visibility = View.GONE
+    }
+
+    private fun isNetworkAvailable(context: Context) {
+
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting) {
+            sendRequest(url)
+            txtEmptyView.visibility = View.GONE
+        } else {
+            txtEmptyView.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+            txtEmptyView.text = "No internet Connection"
+            progress.visibility = View.GONE
+        }
     }
 
     private fun sendRequest(url: String) {
@@ -62,6 +83,8 @@ class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.E
 
         try {
             castByGSon(response)
+            recyclerView.visibility = View.VISIBLE
+            progress.visibility = View.GONE
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -75,5 +98,10 @@ class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.E
         val intent = Intent(this, PhotoActivity::class.java)
         intent.putExtra("albumId", albumId)
         startActivity(intent)
+    }
+
+    override fun onRefresh() {
+        isNetworkAvailable(this)
+        swipeRefreshLayout.isRefreshing = false
     }
 }
