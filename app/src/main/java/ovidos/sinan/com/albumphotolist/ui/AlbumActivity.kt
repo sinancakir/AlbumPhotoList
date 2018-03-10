@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.SwitchPreference
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -24,12 +23,13 @@ import io.androidedu.weatherwidget.core.network.VolleyService
 import ovidos.sinan.com.albumphotolist.R
 import ovidos.sinan.com.albumphotolist.`interface`.AlbumClickListener
 import ovidos.sinan.com.albumphotolist.adapter.AlbumListAdapter
+import ovidos.sinan.com.albumphotolist.enums.EnumInfo
 import ovidos.sinan.com.albumphotolist.model.Album
 import java.io.IOException
 
 class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.ErrorListener, AlbumClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    private val url = "http://jsonplaceholder.typicode.com/albums"
+    private val url = EnumInfo.AlbumUrl.toString()
 
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.activity_album_recycler_view) }
     private val progress by lazy { findViewById<ProgressBar>(R.id.activity_album_prgBar) }
@@ -39,6 +39,7 @@ class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.E
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album)
+        title = EnumInfo.Albums.toString()
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         val divider = DividerItemDecoration(recyclerView.context, LinearLayoutManager.VERTICAL)
@@ -58,7 +59,7 @@ class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.E
         } else {
             txtEmptyView.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
-            txtEmptyView.text = "No internet Connection"
+            txtEmptyView.text = EnumInfo.NoConnection.toString()
             progress.visibility = View.GONE
         }
     }
@@ -96,7 +97,7 @@ class AlbumActivity : AppCompatActivity(), Response.Listener<String>, Response.E
 
     override fun onAlbumItemClickListener(albumId: Int) {
         val intent = Intent(this, PhotoActivity::class.java)
-        intent.putExtra("albumId", albumId)
+        intent.putExtra(EnumInfo.AlbumId.toString(), albumId)
         startActivity(intent)
     }
 

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
+
     <ImageView
         android:id="@+id/custom_dialog_image_view"
         android:layout_width="300dp"

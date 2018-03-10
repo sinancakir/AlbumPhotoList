@@ -9,7 +9,9 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.android.volley.Request
 import com.android.volley.Response
@@ -23,6 +25,7 @@ import io.androidedu.weatherwidget.core.network.VolleyService
 import ovidos.sinan.com.albumphotolist.R
 import ovidos.sinan.com.albumphotolist.`interface`.PhotoClickListener
 import ovidos.sinan.com.albumphotolist.adapter.PhotoListAdapter
+import ovidos.sinan.com.albumphotolist.enums.EnumInfo
 import ovidos.sinan.com.albumphotolist.model.Photo
 import java.io.IOException
 
@@ -32,13 +35,15 @@ class PhotoActivity : AppCompatActivity(), Response.Listener<String>, Response.E
     private val imageDialog by lazy { AlertDialog.Builder(this).create() }
     private val dialogImage by lazy { imageDialog.findViewById<ImageView>(R.id.custom_dialog_image_view) }
     private val txtEmptyView by lazy { findViewById<TextView>(R.id.activity_photo_txtEmptyView) }
+    private val progress by lazy { findViewById<ProgressBar>(R.id.activity_photo_prgBar) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo)
+        title = EnumInfo.Photos.toString()
 
-        val albumId = intent.getIntExtra("albumId", 0)
-        val url = "http://jsonplaceholder.typicode.com/photos/?albumId=$albumId"
+        val albumId = intent.getIntExtra(EnumInfo.AlbumId.toString(), 0)
+        val url = EnumInfo.PhotoUrl.toString() + "$albumId"
 
         val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
@@ -50,8 +55,11 @@ class PhotoActivity : AppCompatActivity(), Response.Listener<String>, Response.E
             }
             recyclerView.setHasFixedSize(true)
             sendRequest(url)
+            txtEmptyView.visibility = View.GONE
         } else {
-            txtEmptyView.text = "No internet Connection"
+            txtEmptyView.visibility = View.VISIBLE
+            txtEmptyView.text = EnumInfo.NoConnection.toString()
+            progress.visibility = View.GONE
         }
     }
 
@@ -75,6 +83,7 @@ class PhotoActivity : AppCompatActivity(), Response.Listener<String>, Response.E
 
         try {
             castByGSon(response)
+            progress.visibility = View.GONE
         } catch (e: IOException) {
             e.printStackTrace()
         }
